@@ -1,7 +1,5 @@
 <template>
-  <div id="carousel">
-    <Carousel />
-  </div>
+  <Carousel />
 </template>
 
 <script>
@@ -13,9 +11,3 @@ export default {
   },
 };
 </script>
-
-<style>
-body {
-  font-family: Arial, sans-serif;
-}
-</style>
