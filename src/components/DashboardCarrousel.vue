@@ -1,5 +1,5 @@
 <template>
-    <div class="column">
+    <div class="column ">
       <div class="carousel-wrapper">
         <h3>Planes</h3>
         <hr>
@@ -33,7 +33,7 @@
         <div class="d-flex justify-content-center ">
           <div class="carousel card-container " id="content">
             <div v-for="(obj, index) in Equipos" :key="index" :class="{ active: index === transitionE }" class="card">
-              <p>{{ obj.titulo }}</p>
+              <p>{{ obj.title }}</p>
               <p>{{ obj.description }}</p>
               <p>{{ obj.precio }}</p>
             </div>
@@ -44,8 +44,28 @@
 </template>
 
 <script>
+import algoliasearch from 'algoliasearch';
+const client = algoliasearch('1PQI6J7XNC', 'ff63140a4095454350a92824b7994c3c');
+const index = client.initIndex('dev_telcel_tienda');
+const Equipos = [];
 export default {
   data() {
+    index.search().then(({ hits }) => {
+    console.log('Resultados de la búsqueda:', hits);
+    //console.log(hits[0]._highlightResult.brand.value) 
+    hits.forEach(element => {
+      Equipos.push(
+        {
+          title: element._highlightResult.brand.value+' - '+element._highlightResult.name.value+'('+element.colorName+')',
+          description: "Description for Card 1",
+          precio: "$ " + element.productPrice
+        }
+      )
+    });
+    }).catch(error => {
+    console.error('Error al realizar la búsqueda:', error);
+    });
+    console.log('Equipos:', Equipos);
     return {
       Planes: [
         { titulo: 'Planes',description: "Description for Card 1",precio: 'precio' },
@@ -61,13 +81,7 @@ export default {
         { titulo: 'Paquetes',description: "Description for Card 4",precio: 'precio' },
 
       ],
-      Equipos: [
-        { titulo: 'Equipos',description: "Description for Card 1",precio: 'precio' },
-        { titulo: 'Equipos',description: "Description for Card 2",precio: 'precio' },
-        { titulo: 'Equipos',description: "Description for Card 3",precio: 'precio' },
-        { titulo: 'Equipos',description: "Description for Card 4",precio: 'precio' },
-
-      ],
+      Equipos,
       transitionPl: 0,
       transitionPa: 0,
       transitionE: 0,
@@ -85,6 +99,11 @@ export default {
       }, this.intervalDuration);
     },
     nextSlide() {
+      if (this.Paquetes.length > 4) {
+        
+      } else {
+        
+      }
       this.transitionPl = (this.transitionPl + 1) % this.Planes.length;
       this.transitionE = (this.transitionE + 1) % this.Equipos.length;
       this.transitionPa = (this.transitionPa + 3) % this.Paquetes.length;
@@ -111,7 +130,7 @@ export default {
   transition: all 0.3s
 }
 .card {
-  width: 50px; 
+  width: 28px; 
   margin-right: 20px;
   background-color: #f0f0f0;
   border-radius: 5px;
@@ -125,6 +144,7 @@ export default {
 .card-container {
   display: flex;
   transition: transform 0.3s ease;
+  
 }
 .carousel div {
   flex: 0 0 100%;
