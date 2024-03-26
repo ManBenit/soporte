@@ -46,17 +46,18 @@
 <script>
 import algoliasearch from 'algoliasearch';
 const client = algoliasearch('1PQI6J7XNC', 'ff63140a4095454350a92824b7994c3c');
-const index = client.initIndex('dev_telcel_tienda');
+const index = client.initIndex('prod_telcel_tienda');
 const Equipos = [];
 export default {
   data() {
-    index.search().then(({ hits }) => {
+    index.search('', {
+  hitsPerPage: 5
+}).then(({ hits }) => {
     console.log('Resultados de la búsqueda:', hits);
-    //console.log(hits[0]._highlightResult.brand.value) 
     hits.forEach(element => {
       Equipos.push(
         {
-          title: element._highlightResult.brand.value+' - '+element._highlightResult.name.value+'('+element.colorName+')',
+          title: element.brand+' - '+element.name+'('+element.colorName+')',
           description: "Description for Card 1",
           precio: "$ " + element.productPrice
         }
