@@ -33,9 +33,12 @@
         <div class="d-flex justify-content-center ">
           <div class="carousel card-container " id="content">
             <div v-for="(obj, index) in Equipos" :key="index" :class="{ active: index === transitionE }" class="card">
+              <h5 class="destacado">{{ obj.destacado }}</h5>
               <p>{{ obj.title }}</p>
-              <p>{{ obj.description }}</p>
-              <p>{{ obj.precio }}</p>
+              <img :src="'https://www.telcel.com/'+obj.images">
+              <p>{{ obj.colorN }}</p>
+              <span class="card-color" :style="'background-color: ' + obj.color + ';'"></span>
+              <h5 class="precio">{{ obj.precio }}</h5>    
             </div>
           </div>
         </div>
@@ -57,9 +60,12 @@ export default {
     hits.forEach(element => {
       Equipos.push(
         {
-          title: element.brand+' - '+element.name+'('+element.colorName+')',
-          description: "Description for Card 1",
-          precio: "$ " + element.productPrice
+          destacado: element.destacados[0],
+          title: element.brand+'  '+element.name,
+          precio: "$" + element.productPrice,
+          color: element.color,
+          colorN: element.colorName,
+          images: element.images
         }
       )
     });
@@ -117,7 +123,33 @@ export default {
 </script>
 
 <style scoped>
-
+.destacado{
+  text-align: center;
+  background-color: #86e1f8b0;
+}
+img{
+  height: 75px;
+  width: 75px;
+  position: absolute;
+  bottom: 28px;
+  left: 110px;
+}
+.precio{
+  color:#fd2929;
+  position: absolute;
+  bottom: 1px;
+  right: 10px;
+  font-weight: bold;
+}
+.card-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: block;
+  position: relative;
+  bottom: 1px;
+  left: 1px;
+}
 
 .carousel-wrapper {
   margin-bottom: 20px; 
@@ -131,10 +163,11 @@ export default {
   transition: all 0.3s
 }
 .card {
-  width: 28px; 
+  width: 38px; 
   margin-right: 20px;
-  background-color: #f0f0f0;
+  background-color: #ffffff;
   border-radius: 5px;
+  border-block-color: rgb(0, 150, 250);
   padding: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   height: 170px;
