@@ -1,44 +1,12 @@
 <template>
-  <div class="column ">
-    <div class="carousel-wrapper">
-      <h3>Planes</h3>
+  <div class="column">
+    <div v-for="(data, title, index) in carouselData" :key="index" class="carousel-wrapper">
+      <h3>{{ title }}</h3>
       <hr>
-      <br>
-      <div class="d-flex justify-content-center ">
-        <div class="carousel card-container " id="content">
-          <div v-for="(obj, index) in Planes" :key="index" :class="{ active: index === transitionPl }" class="card">
-            <p>{{ obj.titulo }}</p>
-            <p>{{ obj.description }}</p>
-            <p>{{ obj.precio }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="carousel-wrapper">
-      <h3>Paquetes</h3>
-      <hr>
-      <div class="d-flex justify-content-center ">
-        <div class="carousel card-container " id="content">
-          <div v-for="(obj, index) in Paquetes" :key="index" :class="{ active: index === transitionPa }" class="card">
-            <p>{{ obj.titulo }}</p>
-            <p>{{ obj.description }}</p>
-            <p>{{ obj.precio }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="carousel-wrapper">
-      <h3>Equipos</h3>
-      <hr>
-      <div class="d-flex justify-content-center ">
-        <div class="carousel card-container " id="content">
-          <div v-for="(obj, index) in Equipos" :key="index" :class="{ active: index === transitionE }" class="card">
-            <h5 class="destacado">{{ obj.destacado }}</h5>
-            <p>{{ obj.title }}</p>
-            <img :src="'https://www.telcel.com/'+obj.images">
-            <p>{{ obj.colorN }}</p>
-            <span class="card-color" :style="'background-color: ' + obj.color + ';'"></span>
-            <h5 class="precio">{{ obj.precio }}</h5>    
+      <div class="d-flex justify-content-center">
+        <div class="carousel card-container">
+          <div v-for="(item, idx) in data" :key="idx" :class="{ active: isActiveSlide(title, idx) }" class="card">
+            <CardComponent :item="item" :title="title" />
           </div>
         </div>
       </div>
@@ -47,158 +15,146 @@
 </template>
 
 <script>
+import CardComponent from './CardsDash.vue';
 import algoliasearch from 'algoliasearch';
+
 const client = algoliasearch('1PQI6J7XNC', 'ff63140a4095454350a92824b7994c3c');
-const results = {
-  "planes": [],
-  "paquetes": [],
-  "equipos": []
-};
 const indexes = {
   "planes": client.initIndex('prod_telcel_planes'),
   "paquetes": client.initIndex('prod_telcel_paquetes'),
   "equipos": client.initIndex('prod_telcel_tienda')
 };
 export default {
-data() {
-  indexes.equipos.search('', {
-    hitsPerPage: 5
-  }).then(({ hits }) => {
-    console.log('Resultados de la búsqueda:', hits);
-    hits.forEach(element => {
-      results.equipos.push(
-        {
-          destacado: element.destacados[0],
+  components: {
+    CardComponent,
+  },
+  data() {
+    return {
+      carouselData: {
+        Planes: [],
+        Paquetes: [],
+        Equipos: [],
+      },
+      activeSlides: {
+        Planes: 0,
+        Paquetes: 0,
+        Equipos: 0
+      },
+      transitionPl: 0,
+      transitionPa: 0,
+      transitionE: 0,
+      intervalId: null,
+      intervalDuration: 2000,
+    };
+  },
+  mounted() {
+    this.fetchData();
+    this.startCarousel();
+  },
+  methods: {
+    async fetchData() {
+      const promises = [
+        this.fetchPlanes(),
+        this.fetchPaquetes(),
+        this.fetchEquipos(),
+      ];
+      await Promise.all(promises);
+    },
+    async fetchPlanes() {
+      try {
+        const { hits } = await indexes.planes.search('', { hitsPerPage: 5 });
+        this.carouselData.Planes = hits.map(element => ({
+          recommended: element.recommended,
+          included: element.dataIncluded,
+          minandSmsIncluded: element.socialNetworksDataIncluded,
+          planName: element.planName,
+          subs: element.subscriptions[0],
+          precio: "$ " + element.price,
+        }));
+      } catch (error) {
+        console.error('Error al obtener los Planes:', error);
+      }
+    },
+    async fetchPaquetes() {
+      try {
+        const { hits } = await indexes.paquetes.search('', { hitsPerPage: 5 });
+        this.carouselData.Paquetes = hits.map(element => ({
+          packageName: element.packageName,
+          megas: element.dataIncluded,
+          precio: "$ " + element.price
+        }));
+        
+      } catch (error) {
+        console.error('Error al obtener los Paquetes:', error);
+      }
+    },
+    async fetchEquipos() {
+      try {
+        const { hits } = await indexes.equipos.search('', { hitsPerPage: 5 });
+        this.carouselData.Equipos = hits.map(element => ({
+          recommended: element.destacados[0],
           title: element.brand+'  '+element.name,
-          precio: "$" + element.productPrice,
+          precio: "$ " + element.productPrice,
           color: element.color,
           colorN: element.colorName,
           images: element.images
-        }
-      )
-    });
-    console.log("result equiois", results.equipos);
-  }).catch(error => {
-    console.error('Error al realizar la búsqueda:', error);
-  });
-  return {
-    Planes: [
-      { titulo: 'Planes',description: "Description for Card 1",precio: 'precio' },
-      { titulo: 'Planes',description: "Description for Card 2",precio: 'precio' },
-      { titulo: 'Planes',description: "Description for Card 3",precio: 'precio' },
-      { titulo: 'Planes',description: "Description for Card 4",precio: 'precio' },
-
-    ],
-    Paquetes: [
-      { titulo: 'Paquetes',description: "Description for Card 1",precio: 'precio' },
-      { titulo: 'Paquetes',description: "Description for Card 2",precio: 'precio' },
-      { titulo: 'Paquetes',description: "Description for Card 3",precio: 'precio' },
-      { titulo: 'Paquetes',description: "Description for Card 4",precio: 'precio' },
-
-    ],
-    Equipos: results.equipos,
-    transitionPl: 0,
-    transitionPa: 0,
-    transitionE: 0,
-    intervalId: null,
-    intervalDuration: 2000, // Intervalo de cambio en milisegundos
-  };
-},
-mounted() {
-  this.startCarousel();
-},
-methods: {
-  startCarousel() {
-    this.intervalId = setInterval(() => {
-      this.nextSlide();
-    }, this.intervalDuration);
+        }));
+        
+      } catch (error) {
+        console.error('Error al obtener los equipos:', error);
+      }
+    },
+    startCarousel() {
+      this.intervalId = setInterval(() => {
+        this.nextSlide('Planes');
+        this.nextSlide('Equipos');
+        this.nextSlide('Paquetes');
+      }, this.intervalDuration);
+    },
+    nextSlide(type) {
+      const dataLength = this.carouselData[type].length;
+      if(type === 'Paquetes')
+        this.activeSlides[type] = (this.activeSlides[type] + 1) % dataLength;
+      this.activeSlides[type] = (this.activeSlides[type] + 3) % dataLength;
+    },
+    isActiveSlide(title, idx) {
+      return this.activeSlides[title] === idx;
+    },
   },
-  nextSlide() {
-    if (this.Paquetes.length > 4) {
-      
-    } else {
-      
-    }
-    this.transitionPl = (this.transitionPl + 1) % this.Planes.length;
-    this.transitionE = (this.transitionE + 1) % this.Equipos.length;
-    this.transitionPa = (this.transitionPa + 3) % this.Paquetes.length;
+  beforeDestroy() {
+    clearInterval(this.intervalId);
   },
-},
-beforeDestroy() {
-  clearInterval(this.intervalId);
-},
 };
 </script>
 
 <style scoped>
-.destacado{
-text-align: center;
-background-color: #86e1f8b0;
-}
-img{
-height: 75px;
-width: 75px;
-position: absolute;
-bottom: 28px;
-left: 110px;
-}
-.precio{
-color:#fd2929;
-position: absolute;
-bottom: 1px;
-right: 10px;
-font-weight: bold;
-}
-.card-color {
-width: 10px;
-height: 10px;
-border-radius: 50%;
-display: block;
-position: relative;
-bottom: 1px;
-left: 1px;
-}
-
 .carousel-wrapper {
-margin-bottom: 20px; 
-margin-left: 10px;
-}
-#content {
-width: 100%;
-padding: 30px;
--webkit-transition: all 0.3s;
--o-transition: all 0.3s;
-transition: all 0.3s
+  margin-bottom: 20px; 
+  margin-left: 10px;
 }
 .card {
-width: 38px; 
-margin-right: 20px;
-background-color: #ffffff;
-border-radius: 5px;
-border-block-color: rgb(0, 150, 250);
-padding: 10px;
-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-height: 170px;
+  width: 38px; 
+  margin-right: 20px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  border-block-color: rgb(0, 150, 250);
+  padding: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  height: 230px;
 }
 .carousel {
-display: flex;
+  display: flex;
 }
 .card-container {
-display: flex;
-transition: transform 0.3s ease;
-
+  display: flex;
+  transition: transform 0.3s ease;
 }
 .carousel div {
-flex: 0 0 100%;
-transition: opacity 0.5s ease; /* Transición suave de opacidad */
-opacity: 0; /* Ocultar todas las diapositivas al principio */
+  flex: 0 0 100%;
+  transition: opacity 0.5s ease; 
+  opacity: 0; 
 }
-
 .carousel div.active {
-opacity: 1; /* Mostrar la diapositiva activa */
+  opacity: 1; 
 }
-h3 {
-margin-top: 10px;
-}
-
 </style>
