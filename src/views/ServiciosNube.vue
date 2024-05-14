@@ -1,5 +1,13 @@
 <template>
-  <div class="servicios">
-    <h1>This is an servicios page</h1>
-  </div>
+  <Services />
 </template>
+
+<script>
+import Services from "@/components/ApiNubeService.vue";
+
+export default {
+  components: {
+    Services,
+  },
+};
+</script>
