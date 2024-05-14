@@ -1,11 +1,11 @@
 <template>
   <div>
     <button @click="callExternalService" class="btn btn-primary">Api Nube Services</button>
-    <div v-if="status">
+    <div v-if="success === 'true'">
         <button type="button" class="btn btn-success">Success</button>
     </div>
-    <div v-else-if="status === 'false'">
-            <button type="button" class="btn btn-danger">Fallo</button>
+    <div v-if="failed === 'true'">
+            <button type="button" class="btn btn-danger">Failed</button>
     </div>
   </div>
 </template>
@@ -14,7 +14,8 @@
 export default {
   data() {
     return {
-      status:null,
+      success : 'false',
+      failed : 'false',
     };
   },
   methods: {
@@ -22,15 +23,18 @@ export default {
       try {
         const response = await fetch('http://localhost:8080/api/roaming/tarifasTerrestre');
         const data = await response.json();
-        console.log(data);
-        if(data.success){
-            this.status = true;
+        console.log(response);
+        if(response.status==200){
+            this.success = 'true';
+            this.failed = 'false';
         }else{
-            this.status = 'false';
+            this.success = 'false';
+            this.failed = 'true';
         }
 
-      } catch (error) {
-        this.status = 'false';
+      } catch {
+        this.success = 'false';
+         this.failed = 'true';
       }
     },
   },
