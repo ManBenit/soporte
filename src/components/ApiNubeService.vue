@@ -1,22 +1,19 @@
 <template>
   <div class="contenedor">
-
-    <button @click="callExternalService" class="btn btn-primary">Api Nube Services</button>
+    <button @click="callExternalService" class="btn btn-primary">Servicios de Api Nube</button>
 
     <Modal :visible="showModal" @close="showModal = false">
-      <h2>Servicios de Api Nube</h2>
-
-        <div v-for="item in titulos">
-            <p>{{ item.title }}</p>
-            <div v-if="success === 'true'">
-                    <button  type="button" class="btn btn-success">Success</button>
-                  </div>
-                  <div v-if="failed === 'true'">
-                    <button type="button" class="btn btn-danger">Failed</button>
-                  </div>
-          </div>
-
-
+      <center><h2>Servicios de Api Nube</h2></center>
+      <hr>
+      <div v-for="(service, index) in services" :key="index">
+        <p>{{ service.titulo }}</p>
+        <div v-if="service.status">
+          <button type="button" class="btn btn-success">Succes</button>
+        </div>
+        <div v-else>
+          <button title="your-tooltip-here" type="button" class="btn btn-danger">Failed</button>
+        </div>
+      </div>
     </Modal>
   </div>
 </template>
@@ -26,15 +23,13 @@ import Modal from './ModalE.vue';
 
 export default {
   components: {
-      Modal
-    },
+    Modal
+  },
   data() {
     return {
       showModal: false,
-      success : 'false',
-      failed : 'false',
-      titulos: [],
-      }
+      services: []
+    };
   },
   methods: {
     async callExternalService() {
@@ -42,33 +37,30 @@ export default {
       try {
         const response = await fetch('http://localhost:8080/api/roaming/consultar-servicios');
         const data = await response.json();
-        console.log(data);
-
-        for (var i = 0; i < data.length; i++) {
-          console.log(data[i].serviceName, data[i].statusCode);
-          this.titulos[i] = {title: data[i].serviceName};
-
-          console.log(this.titulos)
-          if(data[i].statusCode==200){
-            this.success = 'true';
-            this.failed = 'false';
-          }else{
-            this.success = 'false';
-            this.failed = 'true';
-          }
-        }
-      } catch {
-        this.success = 'false';
-        this.failed = 'true';
+        this.services = data.map(service => ({
+          titulo: service.serviceName,
+          status: service.statusCode === 200,
+          body: service.body
+        }));
+      } catch (error) {
+        console.error("Error al llamar al servicio: ", error);
+        this.services = data.map(service => ({
+                  titulo: service.serviceName,
+                  status: service.statusCode === 400,
+                  body: error
+                }));
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
 <style scoped>
-.contenedor{
-    padding: 150px;
+h2{
+
+}
+.contenedor {
+  padding: 150px;
 }
 button {
   margin-bottom: 10px;

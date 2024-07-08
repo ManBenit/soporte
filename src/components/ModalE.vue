@@ -38,6 +38,8 @@ export default {
 .modal-content {
   background: white;
   padding: 20px;
+    width: 45%;
+    height: 50%;
   border-radius: 5px;
   position: relative;
 }
