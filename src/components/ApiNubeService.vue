@@ -45,11 +45,11 @@ export default {
           body: service.body,
         }));
       } catch (error) {
+        // Handle error
         this.services = [{
           titulo: 'Error',
           status: false,
           body: error.message,
-          errorMessage: 'Error en la invocacion del servicio'
         }];
       }
     },
@@ -58,11 +58,12 @@ export default {
       return URL.createObjectURL(blob);
     },
     extractErrorMessage(body) {
-      const match = body.match(/\d{3}\s\w+\s\w+/);
-      if (match) {
-        return match[0];
+      const code = body.match(/\d{3}\s\w+\s\w+/);
+      const desc = body.match(/El requerimiento enviado por el cliente era sintácticamente incorrecto\./);
+      if (code && desc) {
+        return code[0] + ": " + desc[0];
       } else {
-        return 'Error al obtener el codigo de respuesta';
+        return 'Error al obtener el código de respuesta';
       }
     }
   }
