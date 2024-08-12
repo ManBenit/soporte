@@ -17,9 +17,9 @@
           </li>
           <li>
             <router-link to="/telcel" class="nav-link block py-2.5 text-gray-300 border-b text-center border-gray-700 hover:text-lime-300">
-               <button @click="callSearchTelcel">
-                      <span class="relative">Buscador - Telcel</span>
-                    </button>
+                <button @click.prevent="callSearchTelcel">
+                    <span class="relative">Buscador - Telcel</span>
+                </button>
             </router-link>
           </li>
           <li>
@@ -38,18 +38,26 @@
 </template>
 
 <script>
+import Modal from './SearchComponent.vue';
+
 export default {
+  components: {
+    Modal
+  },
   data() {
     return {
       isSidebarOpen: false,
-      showModal: false
+      showModal: false,
     };
   },
   methods: {
     toggleSidebar() {
       this.isSidebarOpen = !this.isSidebarOpen;
+    },
+    callSearchTelcel() {
+      this.showModal = true;
     }
-  }
+  },
 };
 </script>
 
