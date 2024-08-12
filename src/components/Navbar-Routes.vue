@@ -1,128 +1,57 @@
 <template>
-  <nav id="sidebar">
-    <div class="p-4 pt-5">
-      <img src="@/assets/img/gluo.png" class="img" />
-      <hr />
-      <ul class="list-unstyled components mb-5">
-        <li>
-          <router-link to="/" class="nav-link" aria-current="page">
-            <svg class="bi me-2" width="16" height="16">
-              <use xlink:href="#home"></use>
-            </svg>
-            Dashboard
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/telcel" class="nav-link ">
-            <svg class="bi me-2" width="16" height="16">
-              <use xlink:href="#table"></use>
-            </svg>
-            Telcel - Indices
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/servicios" class="nav-link">
-            <svg class="bi me-2" width="16" height="16">
-              <use xlink:href="#grid"></use>
-            </svg>
-            Servicios
-          </router-link>
-        </li>
-      </ul>
+  <div>
+    <button @click="toggleSidebar" class="md:hidden p-4 text-white bg-black fixed top-0 left-0 z-50">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
 
-      <div class="footer">
-        <p>Hecho con ❤️ en Gluo</p>
+    <nav :class="{'translate-x-0': isSidebarOpen, '-translate-x-full': !isSidebarOpen, 'md:translate-x-0': true}" class="w-72 h-screen bg-black text-white transition-transform duration-300 fixed top-0 left-0 z-40">
+      <div class=" pt-5">
+        <img src="@/assets/img/gluo.png" class="block w-20 h-20 mx-auto" />
+        <ul class="list-none mb-5">
+          <li>
+            <router-link to="/" class="nav-link block py-2.5 text-gray-300 border-b text-center border-gray-700 hover:text-lime-300" aria-current="page">
+              Dashboard
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/telcel" class="nav-link block py-2.5 text-gray-300 border-b text-center border-gray-700 hover:text-lime-300">
+               <button @click="callSearchTelcel">
+                      <span class="relative">Buscador - Telcel</span>
+                    </button>
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/servicios" class="nav-link block py-2.5 text-gray-300 border-b text-center border-gray-700 hover:text-lime-300">
+              Servicios
+            </router-link>
+          </li>
+        </ul>
+
+        <div class="absolute bottom-5 w-full text-center">
+          <p class="text-gray-400">Hecho con ❤️ en Gluo</p>
+        </div>
       </div>
-    </div>
-  </nav>
-  <router-view />
+    </nav>
+  </div>
 </template>
 
+<script>
+export default {
+  data() {
+    return {
+      isSidebarOpen: false,
+      showModal: false
+    };
+  },
+  methods: {
+    toggleSidebar() {
+      this.isSidebarOpen = !this.isSidebarOpen;
+    }
+  }
+};
+</script>
+
 <style scoped>
-#sidebar {
-  width: 300px;
-  height: 100vh;
-  background: #000000;
-  color: #fff;
-  -webkit-transition: all 0.3s;
-  -o-transition: all 0.3s;
-  transition: all 0.3s;
-}
-#sidebar.active {
-  margin-left: -300px;
-}
-#sidebar .img {
-  display: block;
-  width: 120px;
-  height: 120px;
-  margin: 0 auto;
-}
-#sidebar .img span {
-  display: block;
-}
-#sidebar ul.components {
-  padding: 0;
-}
-#sidebar ul li {
-  font-size: 16px;
-}
-#sidebar ul li > ul {
-  margin-left: 10px;
-}
-#sidebar ul li > ul li {
-  font-size: 14px;
-}
-#sidebar ul li a {
-  padding: 10px 0;
-  display: block;
-  color: rgba(255, 255, 255, 0.8);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-#sidebar ul li a:hover {
-  color: #d2fc51;
-}
-#sidebar ul li.active > a {
-  background: 0 0;
-  color: #d2fc51;
-}
-
-@media (max-width: 991.98px) {
-  #sidebar {
-    margin-left: -300px;
-  }
-  #sidebar.active {
-    margin-left: 0;
-  }
-}
-a[data-toggle="collapse"] {
-  position: relative;
-}
-.dropdown-toggle::after {
-  display: block;
-  position: absolute;
-  top: 50%;
-  right: 0;
-  -webkit-transform: translateY(-50%);
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-}
-@media (max-width: 991.98px) {
-  #sidebarCollapse span {
-    display: none;
-  }
-}
-#content {
-  width: 100%;
-  padding: 0;
-  min-height: 100vh;
-  -webkit-transition: all 0.3s;
-  -o-transition: all 0.3s;
-  transition: all 0.3s;
-}
-
-.footer p {
-  color: rgba(255, 255, 255, 0.5);
-  position: absolute;
-  bottom: 0;
-}
 </style>
