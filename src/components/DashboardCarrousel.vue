@@ -1,13 +1,11 @@
 <template>
-  <div class="column">
-    <div v-for="(data, title, index) in carouselData" :key="index" class="carousel-wrapper">
-      <h3>{{ title }}</h3>
-      <hr>
-      <div class="d-flex justify-content-center">
-        <div class="carousel card-container">
-          <div v-for="(item, idx) in data" :key="idx" :class="{ active: isActiveSlide(title, idx) }" class="card">
-            <CardComponent :item="item" :title="title" />
-          </div>
+  <div class="flex-auto h-screen overflow-hidden p-4">
+    <div v-for="(data, title, index) in carouselData" :key="index" class="mb-5">
+      <h3 class="text-lg font-semibold mb-2">{{ title }}</h3>
+      <hr class="my-2 border-gray-200">
+      <div class="relative flex overflow-x-auto space-x-4 snap-x snap-mandatory">
+        <div v-for="(item, idx) in data" :key="idx" :class="{'opacity-100': isActiveSlide(title, idx), 'opacity-0': !isActiveSlide(title, idx)}" class="flex-none w-full md:w-60 lg:w-72 bg-white rounded-md border border-blue-400 p-4 shadow-md snap-start transition-opacity duration-500">
+          <CardComponent :item="item" :title="title" />
         </div>
       </div>
     </div>
@@ -24,6 +22,7 @@ const indexes = {
   "paquetes": client.initIndex('prod_telcel_paquetes'),
   "equipos": client.initIndex('prod_telcel_tienda')
 };
+
 export default {
   components: {
     CardComponent,
@@ -40,9 +39,6 @@ export default {
         Paquetes: 0,
         Equipos: 0
       },
-      transitionPl: 0,
-      transitionPa: 0,
-      transitionE: 0,
       intervalId: null,
       intervalDuration: 2000,
     };
@@ -83,7 +79,6 @@ export default {
           megas: element.dataIncluded,
           precio: "$ " + element.price
         }));
-        
       } catch (error) {
         console.error('Error al obtener los Paquetes:', error);
       }
@@ -93,13 +88,12 @@ export default {
         const { hits } = await indexes.equipos.search('', { hitsPerPage: 5 });
         this.carouselData.Equipos = hits.map(element => ({
           recommended: element.destacados[0],
-          title: element.brand+'  '+element.name,
+          title: element.brand + ' ' + element.name,
           precio: "$ " + element.productPrice,
           color: element.color,
           colorN: element.colorName,
           images: element.images
         }));
-        
       } catch (error) {
         console.error('Error al obtener los equipos:', error);
       }
@@ -113,9 +107,9 @@ export default {
     },
     nextSlide(type) {
       const dataLength = this.carouselData[type].length;
-      if(type === 'Paquetes')
+      if (dataLength > 0) {
         this.activeSlides[type] = (this.activeSlides[type] + 1) % dataLength;
-      this.activeSlides[type] = (this.activeSlides[type] + 3) % dataLength;
+      }
     },
     isActiveSlide(title, idx) {
       return this.activeSlides[title] === idx;
@@ -128,33 +122,4 @@ export default {
 </script>
 
 <style scoped>
-.carousel-wrapper {
-  margin-bottom: 20px; 
-  margin-left: 10px;
-}
-.card {
-  width: 38px; 
-  margin-right: 20px;
-  background-color: #ffffff;
-  border-radius: 5px;
-  border-block-color: rgb(0, 150, 250);
-  padding: 10px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  height: 230px;
-}
-.carousel {
-  display: flex;
-}
-.card-container {
-  display: flex;
-  transition: transform 0.3s ease;
-}
-.carousel div {
-  flex: 0 0 100%;
-  transition: opacity 0.5s ease; 
-  opacity: 0; 
-}
-.carousel div.active {
-  opacity: 1; 
-}
 </style>
