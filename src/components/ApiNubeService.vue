@@ -19,15 +19,16 @@
     <div>
       <h3 class="text-center font-semibold">PROD</h3>
       <div v-for="(service, index) in modalContent.prod" :key="'prod-' + index" class="mb-4">
-        <p class="text-base md:text-lg">{{ service.titulo }}</p>
         <div v-if="service.status">
-          <button type="button" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300">
-            Success
+          <button class="px-10 py-2 font-bold group-hover:border-b-2 group-hover:border-lime-300 relative">
+            <span class="relative z-10">{{ service.titulo }}</span>
+            <div class="absolute inset-x-0 bottom-0 h-1 bg-lime-300"></div>
           </button>
         </div>
         <div v-else>
-          <button ref="failedButton" :title="extractErrorMessage(service.body)" type="button" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-300" data-bs-toggle="tooltip">
-            Failed
+          <button ref="failedButton" :title="extractErrorMessage(service.body)" type="button" class="px-10 py-2 font-bold group-hover:border-b-2 group-hover:border-red-300 relative" data-bs-toggle="tooltip">
+            <span class="relative z-10">{{ service.titulo }}</span>
+            <div class="absolute inset-x-0 bottom-0 h-1 bg-red-300"></div>
           </button>
         </div>
       </div>
@@ -37,15 +38,16 @@
     <div>
       <h3 class="text-center font-semibold">QA</h3>
       <div v-for="(service, index) in modalContent.qa" :key="'qa-' + index" class="mb-4">
-        <p class="text-base md:text-lg">{{ service.titulo }}</p>
         <div v-if="service.status">
-          <button type="button" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300">
-            Success
+          <button class="px-10 py-2 font-bold group-hover:border-b-2 relative">
+            <span class="relative z-10">{{ service.titulo }}</span>
+            <div class="absolute inset-x-0 bottom-0 h-1 bg-lime-300"></div>
           </button>
         </div>
         <div v-else>
-          <button ref="failedButton" :title="extractErrorMessage(service.body)" type="button" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-300" data-bs-toggle="tooltip">
-            Failed
+          <button ref="failedButton" :title="extractErrorMessage(service.body)" type="button" class="px-10 py-2 font-bold group-hover:border-b-2 relative" data-bs-toggle="tooltip">
+            <span class="relative z-10">{{ service.titulo }}</span>
+            <div class="absolute inset-x-0 bottom-0 h-1 bg-red-300"></div>
           </button>
         </div>
       </div>
@@ -55,8 +57,9 @@
     <div>
       <div v-for="(service, index) in modalContent.prod" :key="'compare-' + index" class="mb-4">
         <div class="relative inline-flex group">
-          <button @click="compareService(service)" class="px-10 py-2 font-bold group-hover:border-b-2 group-hover:border-lime-300">
-            <span class="relative">Comparar</span>
+          <button @click="compareJson()" class="px-10 py-2 font-bold group-hover:border-b-2 relative">
+            <span class="relative z-10">Comparar</span>
+            <div class="absolute inset-x-0 bottom-0 h-1 bg-blue-300"></div>
           </button>
         </div>
       </div>
