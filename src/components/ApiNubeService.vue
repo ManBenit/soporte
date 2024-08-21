@@ -12,7 +12,7 @@
     </div>
   </div>
 
-  <Modal :visible="showModal" @close="showModal = false">
+
     <h2 class="text-center text-lg md:text-xl font-semibold">{{ modalContent.title }}</h2>
     <hr class="my-4 border-gray-300">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -52,7 +52,6 @@
         </div>
       </div>
     </div>
-  </Modal>
 </template>
 
 <script>
@@ -74,7 +73,6 @@ export default {
   },
   methods: {
     async callApiNubeService() {
-      this.showModal = true;
       this.modalContent.title = 'Servicios de Api Nube';
       try {
         const response = await fetch('http://localhost:8080/api/roaming/consultar-servicios');
@@ -103,7 +101,6 @@ export default {
       }
     },
     callMTService() {
-      this.showModal = true;
       this.modalContent.title = 'Servicios de MiTelcel';
       this.modalContent.qa = [
         {
