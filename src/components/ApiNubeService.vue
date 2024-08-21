@@ -1,57 +1,67 @@
 <template>
   <div class="grid grid-cols-4 gap-4">
     <div class="relative inline-flex group">
-      <button @click="callApiNubeService" class="px-10 py-2 font-bold  group-hover:border-b-2 group-hover:border-lime-300">
+      <button @click="callApiNubeService" class="active px-10 py-2 font-bold group-hover:border-b-2 group-hover:border-lime-300">
         <span class="relative">Servicios de Api Nube</span>
       </button>
     </div>
     <div class="relative inline-flex group">
-      <button @click="callMTService" class="px-10 py-2 font-bold  group-hover:border-b-2 group-hover:border-lime-300">
+      <button @click="callMTService" class="px-10 py-2 font-bold group-hover:border-b-2 group-hover:border-lime-300">
         <span class="relative">Servicios de MiTelcel</span>
       </button>
     </div>
   </div>
 
+  <hr class="my-4 border-gray-300">
 
-    <h2 class="text-center text-lg md:text-xl font-semibold">{{ modalContent.title }}</h2>
-    <hr class="my-4 border-gray-300">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <!-- Columna para PROD -->
-      <div>
-        <h3 class="text-center font-semibold">PROD</h3>
-        <div v-for="(service, index) in modalContent.prod" :key="'prod-' + index" class="mb-4">
-          <p class="text-base md:text-lg">{{ service.titulo }}</p>
-          <div v-if="service.status">
-            <button type="button" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300">
-              Success
-            </button>
-          </div>
-          <div v-else>
-            <button ref="failedButton" :title="extractErrorMessage(service.body)" type="button" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-300" data-bs-toggle="tooltip">
-              Failed
-            </button>
-          </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <!-- Columna para PROD -->
+    <div>
+      <h3 class="text-center font-semibold">PROD</h3>
+      <div v-for="(service, index) in modalContent.prod" :key="'prod-' + index" class="mb-4">
+        <p class="text-base md:text-lg">{{ service.titulo }}</p>
+        <div v-if="service.status">
+          <button type="button" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300">
+            Success
+          </button>
         </div>
-      </div>
-
-      <!-- Columna para QA -->
-      <div>
-        <h3 class="text-center font-semibold">QA</h3>
-        <div v-for="(service, index) in modalContent.qa" :key="'qa-' + index" class="mb-4">
-          <p class="text-base md:text-lg">{{ service.titulo }}</p>
-          <div v-if="service.status">
-            <button type="button" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300">
-              Success
-            </button>
-          </div>
-          <div v-else>
-            <button ref="failedButton" :title="extractErrorMessage(service.body)" type="button" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-300" data-bs-toggle="tooltip">
-              Failed
-            </button>
-          </div>
+        <div v-else>
+          <button ref="failedButton" :title="extractErrorMessage(service.body)" type="button" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-300" data-bs-toggle="tooltip">
+            Failed
+          </button>
         </div>
       </div>
     </div>
+
+    <!-- Columna para QA -->
+    <div>
+      <h3 class="text-center font-semibold">QA</h3>
+      <div v-for="(service, index) in modalContent.qa" :key="'qa-' + index" class="mb-4">
+        <p class="text-base md:text-lg">{{ service.titulo }}</p>
+        <div v-if="service.status">
+          <button type="button" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300">
+            Success
+          </button>
+        </div>
+        <div v-else>
+          <button ref="failedButton" :title="extractErrorMessage(service.body)" type="button" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-300" data-bs-toggle="tooltip">
+            Failed
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna para el botón de comparar -->
+    <div>
+      <div v-for="(service, index) in modalContent.prod" :key="'compare-' + index" class="mb-4">
+        <div class="relative inline-flex group">
+          <button @click="compareService(service)" class="px-10 py-2 font-bold group-hover:border-b-2 group-hover:border-lime-300">
+            <span class="relative">Comparar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
