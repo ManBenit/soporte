@@ -1,157 +1,184 @@
 <template>
   <div class="grid grid-cols-4 gap-4">
+
     <div class="relative inline-flex group">
-      <button @click="callApiNubeService" class="active px-10 py-2 font-bold group-hover:border-b-2 group-hover:border-lime-300">
+      <button @click="callApiNubeService"
+        :disabled="loading"
+        class="active px-10 py-2 font-bold group-hover:border-b-2 group-hover:border-lime-300">
         <span class="relative">Servicios de Api Nube</span>
+        <span v-if="loadingApiNube" class="">
+          <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+        </span>
       </button>
     </div>
+
     <div class="relative inline-flex group">
       <button @click="callMTService" class="px-10 py-2 font-bold group-hover:border-b-2 group-hover:border-lime-300">
         <span class="relative">Servicios de MiTelcel</span>
+        <span v-if="loadingMtServices" class="">
+          <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+        </span>
       </button>
     </div>
+
   </div>
 
   <hr class="my-4 border-gray-300">
 
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-    <!-- Columna para PROD -->
-    <div>
-      <h3 class="text-center font-semibold">PROD</h3>
-      <div v-for="(service, index) in modalContent.prod" :key="'prod-' + index" class="mb-4">
-        <div v-if="service.status">
-          <button class="px-10 py-2 font-bold group-hover:border-b-2 group-hover:border-lime-300 relative">
-            <span class="relative z-10">{{ service.titulo }}</span>
-            <div class="absolute inset-x-0 bottom-0 h-1 bg-lime-300"></div>
-          </button>
+  <div class="scrollable-container">
+    <div class="grid grid-cols-1 md:grid-cols-4 justify-center">
+
+      <!-- Columna para nombre del servicio -->
+      <div>
+        <!--Cabecera-->
+        <div class="text-center font-bold">
+          <h3>Servicio</h3>
         </div>
-        <div v-else>
-          <button ref="failedButton" :title="extractErrorMessage(service.body)" type="button" class="px-10 py-2 font-bold group-hover:border-b-2 group-hover:border-red-300 relative" data-bs-toggle="tooltip">
-            <span class="relative z-10">{{ service.titulo }}</span>
-            <div class="absolute inset-x-0 bottom-0 h-1 bg-red-300"></div>
-          </button>
+
+        <!--Cuerpo-->
+        <div class="">
+          <div v-for="(response, index) in apiResponse.prod" :key="'servname-' + index" class="text-left mt-7">
+            <div v-if="response.status">
+              <div class="relative ml-5 font-semibold h-7">
+                <span>{{ response.titulo }}</span>
+              </div>
+            </div>
+            <div v-else>
+              <div class="relative ml-5 font-semibold h-7">
+                <span>{{ response.titulo }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+
+      
+      <!-- Columna para PROD -->
+      <div>
+
+        <!--Cabecera-->
+        <div class="text-center font-bold">
+          <h3>PROD</h3>
+        </div>
+
+        <!--Cuerpo-->
+        <div class="grid v-screen place-items-center">
+          <div v-for="(response, index) in apiResponse.prod" :key="'prod-' + index" :value="'prod-'+response.titulo" class="text-center w-32 mt-7">
+            <div v-if="response.status">
+              <div class="relative h-7 bg-lime-300">
+                <span>Success</span>
+              </div>
+              <!--px-10 py-2 font-semibold group-hover:border-b-2 group-hover:border-lime-300 relative-->
+            </div>
+            <div v-else>
+              <div class="relative h-7 bg-red-300">
+                <button ref="failedButton" :title="extractErrorMessage(response.body)" type="button" class="relative font-bold group-hover:border-b-2 w-full group-hover:border-red-300" data-bs-toggle="tooltip">
+                  <span>Fail</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Columna para QA -->
+      <div>
+
+        <!--Cabecera-->
+        <div class="text-center font-bold">
+          <h3>QA</h3>
+        </div>
+
+        <!--Cuerpo-->
+        <div class="grid v-screen place-items-center">
+          <div v-for="(response, index) in apiResponse.qa" :key="'qa-' + index" :value="'qa-'+response.titulo" class="text-center w-32 mt-7">
+            <div v-if="response.status">
+              <div class="relative h-7 bg-lime-300">
+                <span>Success</span>
+              </div>
+              <!--px-10 py-2 font-semibold group-hover:border-b-2 group-hover:border-lime-300 relative-->
+            </div>
+            <div v-else>
+              <div class="relative h-7 bg-red-300">
+                <button ref="failedButton" :title="extractErrorMessage(response.body)" type="button" class="relative font-bold group-hover:border-b-2 w-full group-hover:border-red-300" data-bs-toggle="tooltip">
+                  <span>Fail</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Columna para el botón de comparar -->
+      <div class="mb-4 mt-5">
+        <div v-for="(response, index) in apiResponse.prod" :key="'compare-' + index" :value="'compare-'+response.titulo" class="flex justify-center mt-7">
+          <div v-if="apiResponse.prod[index].status || apiResponse.qa[index].status">
+            <div class="relative inline-flex group">
+              <div class="relative font-semibold inset-x-0 flex justify-center items-center h-7">
+                <button @click="compareJson(response.titulo, apiResponse.prod[index].body, apiResponse.qa[index].body)" class="relative px-10 py-2 font-semibold group-hover:border-b-2 group-hover:border-lime-600" data-bs-toggle="tooltip">
+                  <span>Comparar</span>
+                  <div class="absolute inset-x-0 bottom-0 h-1 bg-blue-300"></div>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
+    </div><!--Div del grid de contenido-->
+  </div><!--Div scrollable container-->
+
+
+  <Modal :visible="showModal" @close="showModal = false">
+    <h2 class="text-center text-lg md:text-xl font-semibold mb-3">{{ modalContent.title }}</h2>
+    <!--Cabecera-->
+    <div class="grid grid-cols-2 md:grid-cols-2 justify-center">
+      <div class="text-center font-semibold">Producción</div>
+      <div class="text-center font-semibold">QA</div>
     </div>
 
-    <!-- Columna para QA -->
-    <div>
-      <h3 class="text-center font-semibold">QA</h3>
-      <div v-for="(service, index) in modalContent.qa" :key="'qa-' + index" class="mb-4">
-        <div v-if="service.status">
-          <button class="px-10 py-2 font-bold group-hover:border-b-2 relative">
-            <span class="relative z-10">{{ service.titulo }}</span>
-            <div class="absolute inset-x-0 bottom-0 h-1 bg-lime-300"></div>
-          </button>
-        </div>
-        <div v-else>
-          <button ref="failedButton" :title="extractErrorMessage(service.body)" type="button" class="px-10 py-2 font-bold group-hover:border-b-2 relative" data-bs-toggle="tooltip">
-            <span class="relative z-10">{{ service.titulo }}</span>
-            <div class="absolute inset-x-0 bottom-0 h-1 bg-red-300"></div>
-          </button>
-        </div>
-      </div>
-    </div>
+    <!--Cuerpo-->
+    <div class="grid grid-cols-2 md:grid-cols-2 justify-center">
+      <textarea
+        ref="taBodyProd"
+        readonly
+        id="message"
+        rows="25"
+        class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm resize-none"
+        placeholder="Respuesta recibida de producción..."
+        @scroll="syncTextareaScroll('taBodyProd', 'taBodyQa')"
+        :value="JSON.stringify(JSON.parse(modalContent.bodyProd), null, 2)"
+      ></textarea>
 
-    <!-- Columna para el botón de comparar -->
-    <div>
-      <div v-for="(service, index) in modalContent.prod" :key="'compare-' + index" class="mb-4">
-        <div class="relative inline-flex group">
-          <button @click="compareJson()" class="px-10 py-2 font-bold group-hover:border-b-2 relative">
-            <span class="relative z-10">Comparar</span>
-            <div class="absolute inset-x-0 bottom-0 h-1 bg-blue-300"></div>
-          </button>
-        </div>
-      </div>
+      <textarea
+        ref="taBodyQa"
+        readonly
+        id="message"
+        rows="25"
+        class="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm resize-none"
+        placeholder="Respuesta recibida de QA..."
+        @scroll="syncTextareaScroll('taBodyQa', 'taBodyProd')"
+        :value="JSON.stringify(JSON.parse(modalContent.bodyQa), null, 2)"
+      ></textarea>
     </div>
-  </div>
+  </Modal>
+
 </template>
 
-<script>
-import Modal from './ModalE.vue';
-
-export default {
-  components: {
-    Modal
-  },
-  data() {
-    return {
-      showModal: false,
-      modalContent: {
-        title: '',
-        qa: [],  // Para QA
-        prod: [] // Para PROD
-      }
-    };
-  },
-  methods: {
-    async callApiNubeService() {
-      this.modalContent.title = 'Servicios de Api Nube';
-      try {
-        const response = await fetch('http://localhost:8080/api/roaming/consultar-servicios');
-        const data = await response.json();
-        this.modalContent.qa = data.QA.map(service => ({
-          titulo: service.serviceName,
-          status: service.statusCode === 200,
-          body: service.body,
-        }));
-        this.modalContent.prod = data.PROD.map(service => ({
-          titulo: service.serviceName,
-          status: service.statusCode === 200,
-          body: service.body,
-        }));
-      } catch (error) {
-        this.modalContent.qa = [{
-          titulo: 'Error',
-          status: false,
-          body: error.message,
-        }];
-        this.modalContent.prod = [{
-          titulo: 'Error',
-          status: false,
-          body: error.message,
-        }];
-      }
-    },
-    callMTService() {
-      this.modalContent.title = 'Servicios de MiTelcel';
-      this.modalContent.qa = [
-        {
-          titulo: 'Servicio MiTelcel QA 1',
-          status: true,
-          body: { /* contenido del servicio */ }
-        },
-        {
-          titulo: 'Servicio MiTelcel QA 2',
-          status: false,
-          body: 'Error en el servicio MiTelcel QA 2'
-        }
-      ];
-      this.modalContent.prod = [
-        {
-          titulo: 'Servicio MiTelcel PROD 1',
-          status: true,
-          body: { /* contenido del servicio */ }
-        },
-        {
-          titulo: 'Servicio MiTelcel PROD 2',
-          status: false,
-          body: 'Error en el servicio MiTelcel PROD 2'
-        }
-      ];
-    },
-    extractErrorMessage(body) {
-      const code = body.match(/\d{3}\s\w+\s\w+/);
-      const desc = body.match(/El requerimiento enviado por el cliente era sintácticamente incorrecto\./);
-      if (code && desc) {
-        return code[0] + ": " + desc[0];
-      } else {
-        return 'Error al obtener el código de respuesta';
-      }
-    }
-  }
-};
-</script>
+<script src="@/scripts/ApiNubeService.js"></script>
 
 <style scoped>
+  .scrollable-container {
+    height: 100vh;
+    overflow-y: auto;
+  }
 </style>

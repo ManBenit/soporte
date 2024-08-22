@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Dashboard from "../views/DashboardH.vue";
-import Telcel from "../views/TelcelAlgolia.vue";
-import Servicios from "../views/ServiciosNube.vue";
+import Dashboard from "@/views/DashboardH.vue";
+import Telcel from "@/views/TelcelAlgolia.vue";
+import Servicios from "@/views/ServiciosNube.vue";
 
 const routes = [
   { path: "/", name: "dashboard", component: Dashboard },
